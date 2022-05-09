@@ -3,6 +3,8 @@ import { CloseButton } from "../../CloseButton";
 import { ArrowLeft } from "phosphor-react";
 import { ScreenshotButton } from "../ScreenshotButton";
 import { FormEvent, useState } from "react";
+import { api } from "../../../service/api";
+import { Loading } from "../Loading";
 
 interface FeedbackContentStepProps {
     feedbackType: FeedbackType;
@@ -15,12 +17,16 @@ export function FeedbackContentStep({ feedbackType, onFeedbackRestartRequested, 
     const feedbackTypeInfo = feedbackTypes[feedbackType];
     const [screenshot, setScreenshot] = useState<string | null>(null);
     const [comment, setComment] = useState('');
+    const [isSendingFeedback, setIsSendingFeedback] = useState(false);
 
-    function handleSubmitFeedback(event: FormEvent) {
+    async function handleSubmitFeedback(event: FormEvent) {
         event.preventDefault()
-        console.log({
-            screenshot, comment
-        })
+        setIsSendingFeedback(true);
+        await api.post('/feedbacks', {
+            type: feedbackType,
+            comment, screenshot
+        });
+        setIsSendingFeedback(false);
         onFeedbackSent();
     }
 
@@ -72,8 +78,20 @@ export function FeedbackContentStep({ feedbackType, onFeedbackRestartRequested, 
                 <footer className="flex gap-2 mt-2">
                     <ScreenshotButton screenshot={screenshot} onScreenshotTook={setScreenshot} />
                     <button
+                        disabled={isSendingFeedback || comment.length === 0}
                         type="submit"
-                        className="p-2 bg-brand-500 rounded-md border-transparent flex-1 justify-center items-center text-sm hover:bg-brand-300 focus:outline-none
+                        className="
+                        p-2 
+                        bg-brand-500 
+                        rounded-md 
+                        border-transparent 
+                        flex-1 
+                        flex
+                        justify-center 
+                        items-center 
+                        text-sm 
+                        hover:bg-brand-300 
+                        focus:outline-none
                         focus:ring-2
                         focus:ring-offset-2
                         focus:ring-offset-zinc-900
@@ -82,9 +100,8 @@ export function FeedbackContentStep({ feedbackType, onFeedbackRestartRequested, 
                         disabled:opacity-50
                         disabled:hover:bg-brand-500
                         "
-                        disabled={comment.length === 0}
                     >
-                        Send feedback
+                        {isSendingFeedback ? <Loading /> : 'Send feedback'}
                     </button>
                 </footer>
             </form>
