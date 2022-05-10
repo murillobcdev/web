@@ -1,5 +1,5 @@
 import { CloseButton } from "../../CloseButton"
-
+import successImageUrl from '../../assets/success.svg';
 
 interface FeedbackSuccessStepProps {
     onFeedbackRestartRequested: () => void;
@@ -15,7 +15,7 @@ export function FeedbackSuccessStep({ onFeedbackRestartRequested }: FeedbackSucc
             </header>
 
             <div className="flex flex-col items-center py-10 w-[304px]">
-                <img className="w-[41px] h-[40px]" src="/src/assets/success.svg" alt="Success Image" />
+                <img className="w-[41px] h-[40px]" src={successImageUrl} alt="Success Image" />
 
                 <span className="text-xl mt-2">We appreciate the feedback!</span>
 
